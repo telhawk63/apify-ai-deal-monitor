@@ -1,0 +1,10 @@
+{
+  "actorSpecification": 1,
+  "properties": {
+    "dataset": {
+      "type": "string",
+      "title": "Deal-change dataset",
+      "template": "{{links.apiDefaultDatasetUrl}}/items"
+    }
+  }
+}

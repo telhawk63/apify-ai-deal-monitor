@@ -1,0 +1,7 @@
+{
+  "actorSpecification": 1,
+  "name": "ai-deal-regional-pricing-monitor",
+  "title": "AI Deal & Regional Pricing Monitor",
+  "description": "Monitors official AI pricing and promotion pages, detects meaningful pricing/promo changes, and stores structured findings for n8n/Notion/ChatGPT workflows.",
+  "version": "1.0"
+}

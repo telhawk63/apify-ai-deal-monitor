@@ -1,0 +1,14 @@
+{
+  "name": "apify-ai-deal-monitor",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Apify Actor that monitors AI pricing and promotion pages for meaningful changes.",
+  "scripts": {
+    "start": "node src/main.js"
+  },
+  "dependencies": {
+    "apify": "^3.5.2",
+    "crawlee": "^3.15.3",
+    "playwright": "1.61.1"
+  }
+}

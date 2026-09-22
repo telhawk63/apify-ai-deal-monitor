@@ -1,0 +1,68 @@
+{
+  "title": "AI Deal & Regional Pricing Monitor input",
+  "description": "Monitor official pricing and promotion pages for price drops, free trials, bundles, regional pricing, education offers, and device/app-store promotions.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "startUrls": {
+      "title": "Pages to monitor",
+      "type": "array",
+      "description": "Official pricing, promotion, help-center, app-store, or partner pages.",
+      "editor": "requestListSources",
+      "default": [
+        {"url": "https://www.perplexity.ai/help-center/en/articles/11385821-partner-promotions-and-referral-programs"},
+        {"url": "https://www.perplexity.ai/pro"},
+        {"url": "https://www.anthropic.com/pricing"},
+        {"url": "https://claude.com/pricing"},
+        {"url": "https://x.ai/grok"},
+        {"url": "https://manus.im/pricing"},
+        {"url": "https://chatgpt.com/pricing"},
+        {"url": "https://gemini.google/subscriptions/"},
+        {"url": "https://www.samsung.com/us/offer/"}
+      ]
+    },
+    "keywords": {
+      "title": "Deal keywords",
+      "type": "array",
+      "description": "Words or phrases that make a page change relevant.",
+      "editor": "stringList",
+      "default": [
+        "free", "free trial", "months free", "discount", "save", "offer", "promo", "promotion",
+        "student", "teacher", "education", "annual", "bundle", "credit", "cash back", "statement credit",
+        "limited time", "introductory", "regional", "country", "google play", "samsung", "galaxy", "android"
+      ]
+    },
+    "priceCurrencies": {
+      "title": "Currencies to detect",
+      "type": "array",
+      "editor": "stringList",
+      "default": ["USD", "EGP", "CAD", "GBP", "EUR", "INR", "PHP", "TRY", "BRL", "AED", "SGD"]
+    },
+    "includeBaseline": {
+      "title": "Output first-run baseline",
+      "type": "boolean",
+      "description": "If false, the first run stores a baseline silently and later runs output only meaningful changes.",
+      "default": false
+    },
+    "onlyMeaningfulChanges": {
+      "title": "Only output meaningful changes",
+      "type": "boolean",
+      "description": "Require a keyword or price/currency match on changed pages.",
+      "default": true
+    },
+    "maxPages": {
+      "title": "Maximum pages per run",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100,
+      "default": 25
+    },
+    "webhookUrl": {
+      "title": "Optional n8n/webhook URL",
+      "type": "string",
+      "description": "If supplied, meaningful findings are POSTed here after the crawl.",
+      "editor": "textfield"
+    }
+  },
+  "required": ["startUrls"]
+}

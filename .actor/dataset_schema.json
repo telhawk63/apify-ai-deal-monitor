@@ -1,0 +1,16 @@
+{
+  "actorSpecification": 1,
+  "fields": {},
+  "views": {
+    "overview": {
+      "title": "Deal changes",
+      "transformation": {
+        "fields": ["checkedAt", "domain", "url", "status", "changed", "matchedKeywords", "priceSnippets", "title", "excerpt"]
+      },
+      "display": {
+        "component": "table",
+        "properties": {}
+      }
+    }
+  }
+}
