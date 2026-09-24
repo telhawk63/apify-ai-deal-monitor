@@ -17,7 +17,7 @@ const {
 
 const normalizedKeywords = keywords.map((k) => String(k).trim().toLowerCase()).filter(Boolean);
 const currencyCodes = priceCurrencies.map((c) => String(c).trim().toUpperCase()).filter(Boolean);
-const state = await Actor.openKeyValueStore('DEAL_MONITOR_STATE');
+const state = await Actor.openKeyValueStore('deal-monitor-state');
 const findings = [];
 
 const hashText = (value) => crypto.createHash('sha256').update(value).digest('hex');
