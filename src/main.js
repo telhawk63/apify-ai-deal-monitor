@@ -139,21 +139,61 @@ const crawler = new PlaywrightCrawler({
 
 await crawler.run(startUrls.slice(0, maxPages));
 
+// Step 3: deliver each finding as ONE research item shaped for the n8n
+// MKM Research Intake webhook (POST https://myinvest.app.n8n.cloud/webhook/mkm-research-intake).
+// The intake validates single items (title/source/classification); it rejects the old batch envelope.
 if (webhookUrl && findings.length > 0) {
-    try {
-        const res = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({
-                source: 'apify-ai-deal-monitor',
-                runId: Actor.getEnv().actorRunId,
-                count: findings.length,
-                findings,
-            }),
-        });
-        if (!res.ok) log.warning(`Webhook returned HTTP ${res.status}`);
-    } catch (error) {
-        log.warning('Webhook delivery failed', { error: error?.message || String(error) });
+    const runId = Actor.getEnv().actorRunId || '';
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    for (const finding of findings) {
+        const payload = {
+            source: 'APIFY',
+            title: finding.title || finding.url,
+            sourceUrl: finding.url,
+            summary: finding.excerpt || '',
+            classification: 'Market Intelligence',
+            topic: 'AI SERVICE',
+            detectedAt: finding.checkedAt,
+            matchReason: [
+                finding.matchedKeywords?.length ? `keywords: ${finding.matchedKeywords.join(', ')}` : '',
+                finding.priceSnippets?.length ? `prices: ${finding.priceSnippets.join(' | ')}` : '',
+                finding.changed ? 'page changed since last check' : 'baseline capture',
+            ].filter(Boolean).join('; '),
+            priorPriceSnippets: finding.priorPriceSnippets ?? [],
+            apifyRunId: runId,
+            apifyActorId: 'telhawk63/apify-ai-deal-monitor',
+            notes: [
+                'APIFY deal monitor',
+                finding.domain ? `publisher: ${finding.domain}` : '',
+                finding.checkedAt ? `checked: ${finding.checkedAt}` : '',
+                runId ? `run: ${runId}` : '',
+            ].filter(Boolean).join(' | '),
+        };
+        let delivered = false;
+        for (let attempt = 1; attempt <= 3 && !delivered; attempt += 1) {
+            try {
+                const res = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'content-type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+                if (res.ok) {
+                    delivered = true;
+                    log.info(`Delivered finding to n8n: ${finding.url}`);
+                } else if (res.status >= 400 && res.status < 500) {
+                    log.warning(`n8n rejected payload with HTTP ${res.status} (no retry): ${finding.url}`);
+                    break;
+                } else {
+                    log.warning(`n8n webhook returned HTTP ${res.status} (attempt ${attempt}/3): ${finding.url}`);
+                }
+            } catch (error) {
+                log.warning(`n8n delivery failed (attempt ${attempt}/3): ${finding.url}`, {
+                    error: error?.message || String(error),
+                });
+            }
+            if (!delivered && attempt < 3) await sleep(2000 * attempt);
+        }
+        if (!delivered) log.error(`Giving up on n8n delivery after 3 attempts: ${finding.url}`);
     }
 }
 
