@@ -35,6 +35,7 @@
     "priceCurrencies": {
       "title": "Currencies to detect",
       "type": "array",
+      "description": "Currency codes to detect in pricing and promotional content.",
       "editor": "stringList",
       "default": ["USD", "EGP", "CAD", "GBP", "EUR", "INR", "PHP", "TRY", "BRL", "AED", "SGD"]
     },
