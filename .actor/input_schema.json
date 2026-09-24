@@ -54,6 +54,7 @@
     "maxPages": {
       "title": "Maximum pages per run",
       "type": "integer",
+      "description": "Maximum number of pages to process in a single run.",
       "minimum": 1,
       "maximum": 100,
       "default": 25
